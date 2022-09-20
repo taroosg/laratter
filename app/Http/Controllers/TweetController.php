@@ -141,4 +141,15 @@ class TweetController extends Controller
     // ddd($tweets);
     return view('tweet.index', compact('tweets'));
   }
+
+  public function timeline()
+  {
+    $followings = User::find(Auth::id())->followings->pluck('id')->all();
+    $tweets = Tweet::query()
+      ->where('user_id', Auth::id())
+      ->orWhereIn('user_id', $followings)
+      ->orderBy('updated_at', 'desc')
+      ->get();
+    return view('tweet.index', compact('tweets'));
+  }
 }
